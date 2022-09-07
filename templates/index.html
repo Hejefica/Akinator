@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+  <meta charset="utf-8" />
+  <title>Adivina Quien | Hejefica</title>
+</head>
+<body id="home">
+  {% if result %}
+    <h1>Estás pensando en {{ result }}!</h1>
+  {% else %}
+    <h1>{{ question_text }}</h1>
+    <form>
+      <input type="hidden" name="question" value="{{ question }}" />
+      <label><input type="radio" name="answer" value="1" required /> Si</label><br />
+      <label><input type="radio" name="answer" value="0" required /> No</label><br />
+      <label><input type="radio" name="answer" value="0.5" required /> No sé</label><br />
+      <label><input type="radio" name="answer" value="0.75" required /> Probablemente</label><br />
+      <label><input type="radio" name="answer" value="0.25" required /> Probablemente no</label><br />
+      <br />
+      <input type="submit" value="Next" />
+    </form>
+  {% endif %}
+</body>
+</html>
