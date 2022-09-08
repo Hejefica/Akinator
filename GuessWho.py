@@ -5,16 +5,27 @@ import numpy as np
 app = Flask(__name__)
 
 questions = {
-    1: 'Tu personaje es amarillo?',
-    2: 'Tu personaje es calvo?',
-    3: 'Tu personaje es hombre?',
-    4: 'Tu personaje es chaparro?',
+    1: 'El vato es alto?',
+    2: 'El vato es chino? (pelo o raza)',
+    3: 'El vato usa lentes?',
+    4: 'El vato esta mamado?',
+    5: 'El vato ha reprobado?',
+    6: 'El vato vive lejos?',
+    7: 'El vato sabe pistear?',
+    8: 'El vato es prieto?',
+    9: 'El vato es gay (en secreto)?',
+    10:'El vato es mandil?',
 }
 
 characters = [
-    {'name': 'Homero Simpson',         'answers': {1: 1, 2: 1, 3: 1, 4: 0}},
-    {'name': 'Bob Esponja', 'answers': {1: 1, 2: 1, 3: 1, 4: 0.75}},
-    {'name': 'Arenita Mejillas',          'answers': {1: 0, 2: 0, 3: 0}},
+    {'name': 'Jorge Validvia',       'answers': {1: 0.75, 2: 1   , 3: 0, 4: 0.75, 5: 0, 6: 0   , 7: 0.25, 8: 0   , 9: 1    , 10: 1   }},
+    {'name': 'Isaac Hernandez',      'answers': {1: 0.75, 2: 0.25, 3: 1, 4: 0   , 5: 1, 6: 0.25, 7: 0   , 8: 0.75, 9: 1    , 10: 0.75}},
+    {'name': 'Gerardo Rocha',        'answers': {1: 0.75, 2: 0   , 3: 0, 4: 1   , 5: 0, 6: 0   , 7: 1   , 8: 1   , 9: 0    , 10: 0.75}},
+    {'name': 'Johan "Lee" Garcia',   'answers': {1: 1   , 2: 1   , 3: 1, 4: 1   , 5: 0, 6: 0   , 7: 0.25, 8: 1   , 9: 0.75 , 10: 1   }},
+    {'name': 'Alejandro García',     'answers': {1: 1   , 2: 0   , 3: 0, 4: 0.25, 5: 0, 6: 1   , 7: 1   , 8: 0   , 9: 0.75 , 10: 0.75}},
+    {'name': 'Hector Figueroa',      'answers': {1: 1   , 2: 0   , 3: 0, 4: 0.25, 5: 0, 6: 0.25, 7: 1   , 8: 0.25, 9: 0.75 , 10: 0.75}},
+    {'name': 'Paulo Salvatore',      'answers': {1: 0.75, 2: 0   , 3: 1, 4: 0   , 5: 0, 6: 0.25, 7: 0.75, 8: 0.25, 9: 0.75 , 10: 1   }},
+    {'name': 'Jordan Ventura',       'answers': {1: 0.75, 2: 0.75, 3: 0, 4: 0   , 5: 1, 6: 0.25, 7: 0   , 8: 0.25, 9: 0    , 10: 0   }},
 ]
 
 questions_so_far = []
@@ -45,7 +56,6 @@ def calculate_character_probability(character, questions_so_far, answers_so_far)
         P_answers_given_character * P_character) / P_answers
 
     return P_character_given_answers
-
 
 def character_answer(character, question):
     if question in character['answers']:
@@ -78,8 +88,8 @@ def index():
     questions_left = list(set(questions.keys()) - set(questions_so_far))
     if len(questions_left) == 0:
         result = sorted(
-            probabilities, key=lambda p: p['probability'], reverse=True)[0]
-        return render_template('index.html', result=result['name'])
+            probabilities, key = lambda p: p['probability'], reverse = True)[0]
+        return render_template('index.html', result = result['name'])
     else:
         next_question = random.choice(questions_left)
         return render_template('index.html', question=next_question, question_text=questions[next_question])
