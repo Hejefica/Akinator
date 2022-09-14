@@ -20,18 +20,14 @@ def create_server_connection(host_name, user_name, user_password, database):
 
 def get_DB_info(connection):
     cursor = connection.cursor()
-    query = 'select idQuestions from questions'
-    cursor.execute(query)
-
+    
+    cursor.execute('SELECT idQuestions FROM questions')
     idQuestions = []
     for row in cursor:
         for field in row:
             idQuestions.append(field)
-    
-    cursor = connection.cursor()
-    query = 'select Question from questions'
-    cursor.execute(query)
 
+    cursor.execute('SELECT Question FROM questions')
     Questions = []
     for row in cursor:
         for field in row:
@@ -45,7 +41,6 @@ def calculate_probabilites(questions_so_far, answers_so_far):
             'name': character['name'],
             'probability': calculate_character_probability(character, questions_so_far, answers_so_far)
         })
-
     return probabilities
 
 def calculate_character_probability(character, questions_so_far, answers_so_far):
@@ -77,7 +72,7 @@ def character_answer(character, question):
 app = Flask(__name__)
 
 characters = [
-    {'name': 'Jorge Validvia',       'answers': {1: 0.75, 2: 1   , 3: 0, 4: 0.75, 5: 0, 6: 0   , 7: 0.25, 8: 0   , 9: 1    , 10: 1   }},
+    {'name': 'Jorge Valdivia',       'answers': {1: 0.75, 2: 1   , 3: 0, 4: 0.75, 5: 0, 6: 0   , 7: 0.25, 8: 0   , 9: 1    , 10: 1   }},
     {'name': 'Isaac Hernandez',      'answers': {1: 0.75, 2: 0.25, 3: 1, 4: 0   , 5: 1, 6: 0.25, 7: 0   , 8: 0.75, 9: 1    , 10: 0.75}},
     {'name': 'Gerardo Rocha',        'answers': {1: 0.75, 2: 0   , 3: 0, 4: 1   , 5: 0, 6: 0   , 7: 1   , 8: 1   , 9: 0    , 10: 0.75}},
     {'name': 'Johan "Lee" Garcia',   'answers': {1: 1   , 2: 1   , 3: 1, 4: 1   , 5: 0, 6: 0   , 7: 0.25, 8: 1   , 9: 0.75 , 10: 1   }},
