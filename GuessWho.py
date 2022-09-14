@@ -24,40 +24,19 @@ def get_DB_info(connection):
     cursor.execute(query)
 
     idQuestions = []
-
     for row in cursor:
         for field in row:
             idQuestions.append(field)
-    return idQuestions
+    
+    cursor = connection.cursor()
+    query = 'select Question from questions'
+    cursor.execute(query)
 
-app = Flask(__name__)
-
-questions = {
-    1: 'El vato es alto?',
-    2: 'El vato es chino? (pelo o raza)',
-    3: 'El vato usa lentes?',
-    4: 'El vato esta mamado?',
-    5: 'El vato ha reprobado?',
-    6: 'El vato vive lejos?',
-    7: 'El vato sabe pistear?',
-    8: 'El vato es prieto?',
-    9: 'El vato es gay (en secreto)?',
-    10:'El vato es mandil?',
-}
-
-characters = [
-    {'name': 'Jorge Validvia',       'answers': {1: 0.75, 2: 1   , 3: 0, 4: 0.75, 5: 0, 6: 0   , 7: 0.25, 8: 0   , 9: 1    , 10: 1   }},
-    {'name': 'Isaac Hernandez',      'answers': {1: 0.75, 2: 0.25, 3: 1, 4: 0   , 5: 1, 6: 0.25, 7: 0   , 8: 0.75, 9: 1    , 10: 0.75}},
-    {'name': 'Gerardo Rocha',        'answers': {1: 0.75, 2: 0   , 3: 0, 4: 1   , 5: 0, 6: 0   , 7: 1   , 8: 1   , 9: 0    , 10: 0.75}},
-    {'name': 'Johan "Lee" Garcia',   'answers': {1: 1   , 2: 1   , 3: 1, 4: 1   , 5: 0, 6: 0   , 7: 0.25, 8: 1   , 9: 0.75 , 10: 1   }},
-    {'name': 'Alejandro García',     'answers': {1: 1   , 2: 0   , 3: 0, 4: 0.25, 5: 0, 6: 1   , 7: 1   , 8: 0   , 9: 0.75 , 10: 0.75}},
-    {'name': 'Hector Figueroa',      'answers': {1: 1   , 2: 0   , 3: 0, 4: 0.25, 5: 0, 6: 0.25, 7: 1   , 8: 0.25, 9: 0.75 , 10: 0.75}},
-    {'name': 'Paulo Salvatore',      'answers': {1: 0.75, 2: 0   , 3: 1, 4: 0   , 5: 0, 6: 0.25, 7: 0.75, 8: 0.25, 9: 0.75 , 10: 1   }},
-    {'name': 'Jordan Ventura',       'answers': {1: 0.75, 2: 0.75, 3: 0, 4: 0   , 5: 1, 6: 0.25, 7: 0   , 8: 0.25, 9: 0    , 10: 0   }},
-]
-
-questions_so_far = []
-answers_so_far = []
+    Questions = []
+    for row in cursor:
+        for field in row:
+            Questions.append(field)
+    return idQuestions, Questions
 
 def calculate_probabilites(questions_so_far, answers_so_far):
     probabilities = []
@@ -95,10 +74,26 @@ def character_answer(character, question):
         return character['answers'][question]
     return 0.5
 
+app = Flask(__name__)
+
+characters = [
+    {'name': 'Jorge Validvia',       'answers': {1: 0.75, 2: 1   , 3: 0, 4: 0.75, 5: 0, 6: 0   , 7: 0.25, 8: 0   , 9: 1    , 10: 1   }},
+    {'name': 'Isaac Hernandez',      'answers': {1: 0.75, 2: 0.25, 3: 1, 4: 0   , 5: 1, 6: 0.25, 7: 0   , 8: 0.75, 9: 1    , 10: 0.75}},
+    {'name': 'Gerardo Rocha',        'answers': {1: 0.75, 2: 0   , 3: 0, 4: 1   , 5: 0, 6: 0   , 7: 1   , 8: 1   , 9: 0    , 10: 0.75}},
+    {'name': 'Johan "Lee" Garcia',   'answers': {1: 1   , 2: 1   , 3: 1, 4: 1   , 5: 0, 6: 0   , 7: 0.25, 8: 1   , 9: 0.75 , 10: 1   }},
+    {'name': 'Alejandro García',     'answers': {1: 1   , 2: 0   , 3: 0, 4: 0.25, 5: 0, 6: 1   , 7: 1   , 8: 0   , 9: 0.75 , 10: 0.75}},
+    {'name': 'Hector Figueroa',      'answers': {1: 1   , 2: 0   , 3: 0, 4: 0.25, 5: 0, 6: 0.25, 7: 1   , 8: 0.25, 9: 0.75 , 10: 0.75}},
+    {'name': 'Paulo Salvatore',      'answers': {1: 0.75, 2: 0   , 3: 1, 4: 0   , 5: 0, 6: 0.25, 7: 0.75, 8: 0.25, 9: 0.75 , 10: 1   }},
+    {'name': 'Jordan Ventura',       'answers': {1: 0.75, 2: 0.75, 3: 0, 4: 0   , 5: 1, 6: 0.25, 7: 0   , 8: 0.25, 9: 0    , 10: 0   }},
+]
+
+connection = create_server_connection("localhost", "root", "hejefica", "guesswho")
+idQuestions, Questions = get_DB_info(connection)
+questions_so_far = []
+answers_so_far = []
+
 @app.route('/')
 def index():
-    connection = create_server_connection("localhost", "root", "hejefica", "guesswho")
-    idQuestions = get_DB_info(connection)
     global questions_so_far, answers_so_far
 
     question = request.args.get('question')
@@ -109,14 +104,13 @@ def index():
     probabilities = calculate_probabilites(questions_so_far, answers_so_far)
 
     questions_left = list(set(idQuestions) - set(questions_so_far))
-
     if len(questions_left) == 0:
         result = sorted(
             probabilities, key = lambda p: p['probability'], reverse = True)[0]
         return render_template('index.html', result = result['name'])
     else:
         next_question = random.choice(questions_left)
-        return render_template('index.html', question = next_question, question_text = questions[next_question])
+        return render_template('index.html', question = next_question, question_text = Questions[next_question - 1])
 
 if __name__ == '__main__':
     app.run()
